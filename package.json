@@ -1,0 +1,25 @@
+{
+  "name": "Node-Employee-Tracker",
+  "version": "1.0.0",
+  "description": "Command line application using Node.js (inquirer) and MySQL to view and manage company employees.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bgswilde/Node-Employee-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bgswilde/Node-Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/bgswilde/Node-Employee-Tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.1.2",
+    "mysql2": "^2.3.0"
+  }
+}
