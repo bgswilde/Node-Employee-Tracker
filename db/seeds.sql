@@ -21,6 +21,7 @@ VALUES
     ('Financial Director', 85000, 4);
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
+VALUES
     ('Rebecca', 'Welton', 10, NULL),
     ('Leslie', 'Higgins', 12, 1),
     ('Ted', 'Lasso', 7, NULL),
