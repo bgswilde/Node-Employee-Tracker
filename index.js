@@ -1,9 +1,10 @@
-// const mysql = require('mysql2');
-// const db = require('./db/connection');
-// const cTable = require('console.table');
+const mysql = require('mysql2');
+const db = require('./db/connection');
+const cTable = require('console.table');
 const inquirer = require('inquirer');
 const figlet = require('figlet');
 
+// Options prompt, displaying at the beginning of app launch and after each table display
 const showOptions = () => {
     inquirer.prompt({
         type: 'list',
@@ -45,8 +46,24 @@ const showOptions = () => {
     })
 };
 
+const viewEmployees = () => {
+    const sql = `SELECT e.id, e.first_name, e.last_name, r.title AS role, r.salary, d.name AS department, CONCAT(m.first_name, ' ', m.last_name) AS manager 
+    FROM employees e 
+    LEFT JOIN roles AS r ON e.role_id = r.id 
+    LEFT JOIN departments AS d ON r.department_id = d.id
+    LEFT JOIN employees AS m ON m.id = e.manager_id;`
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        console.table(results);
+    })
+    showOptions();
+}
+// initializing the application by displaying ascii art and initial option prompt
 const init = async () => {
-    await figlet('Employee', function(err, data) {
+    figlet('Employee', function(err, data) {
         if (err) {
             console.log('Ascii Art did not print...');
             console.dir(err);
@@ -64,8 +81,13 @@ const init = async () => {
         console.log(data)
     });
 
-    await console.log('Welcome to the Employee Tracker');
     await showOptions();
 };
+
+// begin connection and start app
+db.connect(err => {
+    if (err) throw err;
+    console.log('Database connected! We are ready to roll!');
+})
 
 init();
