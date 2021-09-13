@@ -46,6 +46,15 @@ const showOptions = () => {
     })
 };
 
+const displayTable = sql => {
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        console.table(results);
+    })
+};
+
 const viewEmployees = () => {
     const sql = `SELECT e.id, e.first_name, e.last_name, r.title AS role, r.salary, d.name AS department, CONCAT(m.first_name, ' ', m.last_name) AS manager 
     FROM employees e 
@@ -53,35 +62,69 @@ const viewEmployees = () => {
     LEFT JOIN departments AS d ON r.department_id = d.id
     LEFT JOIN employees AS m ON m.id = e.manager_id;`
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-        console.table(results);
-    })
-    showOptions();
+    displayTable(sql);
+    setTimeout(showOptions, 300); 
 }
-// initializing the application by displaying ascii art and initial option prompt
-const init = async () => {
-    figlet('Employee', function(err, data) {
-        if (err) {
-            console.log('Ascii Art did not print...');
-            console.dir(err);
-            return;
-        }
-        console.log(data)
-    });
-    
-    await figlet('Tracker', function(err, data) {
-        if (err) {
-            console.log('Ascii Art did not print...');
-            console.dir(err);
-            return;
-        }
-        console.log(data)
-    });
 
-    await showOptions();
+const viewDepartments = () => {
+    const sql = `SELECT id AS department_id, name AS department_name FROM departments;`
+
+    displayTable(sql);
+    setTimeout(showOptions, 300);
+}
+
+const viewRoles = () => {
+    const sql = `SELECT r.id AS role_id, r.title, r.salary, d.name AS department
+    FROM roles r 
+    LEFT JOIN departments AS d ON r.department_id = d.id;`
+
+    displayTable(sql);
+    setTimeout(showOptions, 300);
+}
+
+// initializing the application by displaying ascii art and initial option prompt
+const init = () => {
+    // figlet('Employee', function(err, data) {
+    //     if (err) {
+    //         console.log('Ascii Art did not print...');
+    //         console.dir(err);
+    //         return;
+    //     }
+    //     console.log(data)
+    // });
+    
+    // setTimout(figlet('Tracker', function(err, data) {
+    //     if (err) {
+    //         console.log('Ascii Art did not print...');
+    //         console.dir(err);
+    //         return;
+    //     }
+    //     console.log(data)
+    // }), 100);
+    console.log(
+    `
+    =========================
+
+    ┏━━━┓╋╋╋╋╋┏┓
+    ┃┏━━┛╋╋╋╋╋┃┃
+    ┃┗━━┳┓┏┳━━┫┃┏━━┳┓╋┏┳━━┳━━┓
+    ┃┏━━┫┗┛┃┏┓┃┃┃┏┓┃┃╋┃┃┃━┫┃━┫
+    ┃┗━━┫┃┃┃┗┛┃┗┫┗┛┃┗━┛┃┃━┫┃━┫
+    ┗━━━┻┻┻┫┏━┻━┻━━┻━┓┏┻━━┻━━┛
+    ╋╋╋╋╋╋╋┃┃╋╋╋╋╋╋┏━┛┃
+    ╋╋╋╋╋╋╋┗┛╋╋╋╋╋╋┗━━┛
+    ┏━━━━┓╋╋╋╋╋╋┏┓
+    ┃┏┓┏┓┃╋╋╋╋╋╋┃┃
+    ┗┛┃┃┣┻┳━━┳━━┫┃┏┳━━┳━┓
+    ╋╋┃┃┃┏┫┏┓┃┏━┫┗┛┫┃━┫┏┛
+    ╋╋┃┃┃┃┃┏┓┃┗━┫┏┓┫┃━┫┃
+    ╋╋┗┛┗┛┗┛┗┻━━┻┛┗┻━━┻┛
+    
+    =========================
+    
+    `
+    );
+    setTimeout(showOptions, 400);
 };
 
 // begin connection and start app
