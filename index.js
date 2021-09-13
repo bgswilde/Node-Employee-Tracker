@@ -82,6 +82,33 @@ const viewRoles = () => {
     setTimeout(showOptions, 300);
 }
 
+const addDepartment = () => {
+    inquirer.prompt({
+        type: 'input',
+        name: 'department',
+        message: 'What is the name of the department you would like to add?',
+        validate: department => {
+            if (department) {
+                return true;
+            } else {
+                console.log('Please enter a valid response.');
+                return false;
+            }
+        } 
+    }).then(({ department }) => {
+        const sql = `INSERT INTO departments (name)
+        VALUE ('${department}');`
+
+        db.query(sql, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log(`Successfully added the ${department} department.`);
+            setTimeout(showOptions, 300);
+        })
+    })
+}
+
 // initializing the application by displaying ascii art and initial option prompt
 const init = () => {
     // figlet('Employee', function(err, data) {
