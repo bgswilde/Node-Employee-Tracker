@@ -1,8 +1,7 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const db = require('./db/connection');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
-const figlet = require('figlet');
 
 // Options prompt, displaying at the beginning of app launch and after each table display
 const showOptions = () => {
@@ -109,25 +108,155 @@ const addDepartment = () => {
     })
 }
 
+const addRole = () => {
+    
+    const departmentOptions = [];
+    
+    db.promise().query("SELECT name, id FROM departments").then((departments) => {
+        for (let i = 0; i < departments[0].length; i++) {
+            const departmentList = departments[0]
+            departmentOptions.push({
+                name: departmentList[i].name,
+                value: departmentList[i].id
+            });
+        };
+
+        inquirer.prompt(
+            [
+                {
+                    type: 'input',
+                    name: 'title',
+                    message: 'What is the name of the role you would like to add?',
+                    validate: title => {
+                        if (title) {
+                            return true;
+                        } else {
+                            console.log('Please enter a valid response.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role you would like to add?',
+                    validate: salary => {
+                        if (salary) {
+                            return true;
+                        } else {
+                            console.log('Please enter a valid response.');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'list',
+                    name: 'option',
+                    message: 'What department is this role a part of?',
+                    choices: departmentOptions
+                }
+            ]
+        ).then((answers) =>{
+
+            const sql = `INSERT INTO roles (title, salary, department_id)
+            VALUES ('${answers.title}', '${answers.salary}', '${answers.option}');`
+
+            db.query(sql, (err) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.log(`Successfully added the ${answers.title} role.`);
+                showOptions();
+            })
+        })
+    })
+}
+
+
+const addEmployee = () => {
+    
+    const roleOptions = [];
+    const managerOptions = [];
+
+    db.promise().query("SELECT * FROM roles").then((roles) => {
+        for (let i = 0; i < roles[0].length; i++) {
+            const rolesList = roles[0]
+            roleOptions.push({
+                name: rolesList[i].title,
+                value: rolesList[i].id
+            });
+        };
+
+        db.promise().query("SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employees WHERE manager_id IS NULL").then((managers) => {
+            for (let i = 0; i < managers[0].length; i++) {
+                const managerList = managers[0]
+                managerOptions.push({
+                    name: managerList[i].name,
+                    value: managerList[i].id
+                });
+            };
+
+
+            inquirer.prompt(
+                [
+                    {
+                        type: 'input',
+                        name: 'first_name',
+                        message: 'What is the FIRST NAME of the employee you would like to add?',
+                        validate: first_name => {
+                            if (first_name) {
+                                return true;
+                            } else {
+                                console.log('Please enter a valid response.');
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        type: 'input',
+                        name: 'last_name',
+                        message: 'What is the LAST NAME of the employee you would like to add?',
+                        validate: last_name => {
+                            if (last_name) {
+                                return true;
+                            } else {
+                                console.log('Please enter a valid response.');
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        type: 'list',
+                        name: 'role',
+                        message: 'What ROLE does this employee have?',
+                        choices: roleOptions
+                    },
+                    {
+                        type: 'list',
+                        name: 'manager',
+                        message: 'Which manager does this employee report to?',
+                        choices: managerOptions
+                    }
+                ]
+            ).then((answers) =>{
+
+                const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+                VALUES ('${answers.first_name}', '${answers.last_name}', '${answers.role}', '${answers.manager}');`
+
+                db.query(sql, (err) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                    console.log(`Successfully added ${answers.first_name} ${answers.last_name} to the employee database!`);
+                    showOptions();
+                })
+            })
+        })
+    })
+};
+
 // initializing the application by displaying ascii art and initial option prompt
 const init = () => {
-    // figlet('Employee', function(err, data) {
-    //     if (err) {
-    //         console.log('Ascii Art did not print...');
-    //         console.dir(err);
-    //         return;
-    //     }
-    //     console.log(data)
-    // });
-    
-    // setTimout(figlet('Tracker', function(err, data) {
-    //     if (err) {
-    //         console.log('Ascii Art did not print...');
-    //         console.dir(err);
-    //         return;
-    //     }
-    //     console.log(data)
-    // }), 100);
     console.log(
     `
     =========================
@@ -158,6 +287,12 @@ const init = () => {
 db.connect(err => {
     if (err) throw err;
     console.log('Database connected! We are ready to roll!');
+})
+
+process.on('unhandledRejection', (e) => {
+    console.error(e);
+    // close the database connection
+    process.exit(1);
 })
 
 init();
