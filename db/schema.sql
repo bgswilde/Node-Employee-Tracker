@@ -1,4 +1,4 @@
-USE employees;
+USE my_employees;
 
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS roles;
