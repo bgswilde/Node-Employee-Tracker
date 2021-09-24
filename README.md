@@ -34,7 +34,7 @@
   ### Deployed link and Screenshots
   (no deployed application, runs through node on local machine)
   ![screenshot](./assets/images/employee-tracker.png)
-  ![walkthrough-video](https://drive.google.com/file/d/1wklsKUikLKTgV1ESNO4Mx7oAz3ziUr2Q/view?usp=sharing)
+  [walkthrough-video](https://drive.google.com/file/d/1wklsKUikLKTgV1ESNO4Mx7oAz3ziUr2Q/view?usp=sharing)
 
   ## Credits
   The user guidelines for this project were given by Trilogy Education as a part of the University of Kansas Full Stack Web Developer Bootcamp. © 2021 Trilogy Education Services, LLC, a 2U, Inc. brand. Code original to Brian Wilde.
